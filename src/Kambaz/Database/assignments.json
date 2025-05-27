@@ -1,0 +1,193 @@
+[
+  {
+    "_id": "A101",
+    "title": "Propulsion Assignment",
+    "course": "RS101",
+    "description": "a101 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A102",
+    "title": "Combustion Analysis",
+    "course": "RS101",
+    "description": "a102 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS",
+      "WEBSITE_URL"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A103",
+    "title": "Nozzle Design Project",
+    "course": "RS101",
+    "description": "a103 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A201",
+    "title": "Aerodynamics Quiz",
+    "course": "RS102",
+    "description": "a201 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A202",
+    "title": "Flow Analysis",
+    "course": "RS102",
+    "description": "a202 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS",
+      "MEDIA_RECORDINGS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A203",
+    "title": "Heating Analysis",
+    "course": "RS102",
+    "description": "a203 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A301",
+    "title": "Structural Design Task",
+    "course": "RS103",
+    "description": "a301 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A302",
+    "title": "Orbital Calculations",
+    "course": "RS103",
+    "description": "a302 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  },
+  {
+    "_id": "A303",
+    "title": "Systems Engineering Exam",
+    "course": "RS103",
+    "description": "a303 description",
+    "points": 100,
+    "group": "ASSIGNMENTS",
+    "display": "PERCENTAGE",
+    "submissionType": "ONLINE",
+    "entryOptions": [
+      "TEXT_ENTRY",
+      "FILE_UPLOADS"
+    ],
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00"
+  }
+]
