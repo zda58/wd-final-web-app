@@ -115,7 +115,7 @@ export default function Dashboard() {
           onClick={() => {
             setEnrolling(!enrolling)
           }} id="wd-update-enrollment-click">
-          Enrollments
+          {enrolling ? "My courses" : "All Courses"}
         </button>
       </div>
       <hr />

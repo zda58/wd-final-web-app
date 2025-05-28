@@ -88,7 +88,7 @@ export default function PeopleDetails() {
             onChange={(e) => setRole(e.target.value)}
             className="wd-edit-role form-control mb-2">
             <option value="ADMIN">Admin</option>
-            <option value="TA">Assistants</option>
+            <option value="TA">Assistant</option>
             <option value="FACULTY">Faculty</option>
             <option value="STUDENT">Student</option>
           </select>
