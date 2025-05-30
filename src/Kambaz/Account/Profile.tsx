@@ -22,8 +22,7 @@ export default function Profile() {
   useEffect(() => { fetchProfile(); }, []);
 
   const updateProfile = async () => {
-    const updatedProfile = await client.updateUser(profile);
-    dispatch(setCurrentUser(updatedProfile));
+    dispatch(setCurrentUser(profile));
   };
   return (
     <div id="wd-profile-screen">

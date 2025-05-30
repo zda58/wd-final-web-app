@@ -1,0 +1,65 @@
+[
+  {
+    "_id": "A101",
+    "title": "Quiz 1",
+    "course": "RS101",
+    "description": "fes",
+    "assignTo": [
+      "SEC1",
+      "SEC2"
+    ],
+    "type": "GRADED",
+    "group": "ASSIGNMENTS",
+    "shuffleAnswers": true,
+    "timeLimit": 20,
+    "multipleAttempts": false,
+    "attempts": 5,
+    "showCorrect": "IMMEDIATELY",
+    "accessCode": "",
+    "oneQuestionAtTime": false,
+    "requiredWebcam": false,
+    "lockAfterAnswering": false,
+    "due": "2025-05-20T23:59:00-05:00",
+    "from": "2025-05-20T00:00:00-05:00",
+    "until": "2025-05-20T23:59:00-05:00",
+    "questions": [
+      {
+        "_id": "q123",
+        "title": "q1",
+        "points": 4,
+        "type": "MULTIPLE",
+        "question": "when was the declaration of independence signed",
+        "multipleOpts": [
+          {
+            "_id": "afew8",
+            "value": "ans"
+          },
+          {
+            "_id": "he583",
+            "value": "second"
+          }
+        ],
+        "multipleAnswerID": "afew8"
+      },
+      {
+        "_id": "q123",
+        "title": "q2",
+        "points": 4,
+        "type": "TRUEFALSE",
+        "question": "what is the molecular structure of water",
+        "boolAnswer": false
+      },
+      {
+        "_id": "q123",
+        "title": "q3",
+        "points": 4,
+        "type": "FILLBLANK",
+        "question": "whats the name of the first president",
+        "fillAnswers": [
+          "f",
+          "a"
+        ]
+      }
+    ]
+  }
+]

@@ -73,9 +73,8 @@ export default function AssignmentEditor() {
       alert("Assignment should have a title");
       return;
     }
-    const updatedAssignment =
-      await assignmentsClient.updateAssignment(assignment);
-    dispatch(updateAssignment(updatedAssignment));
+    await assignmentsClient.updateAssignment(assignment);
+    dispatch(updateAssignment(assignment));
     navigator(`/Kambaz/Courses/${cid}/Assignments`);
   }
 
@@ -116,7 +115,7 @@ export default function AssignmentEditor() {
               <Form.Select value={assignment.group || "ASSIGNMENTS"}
                 onChange={(e) => setAssignment({ ...assignment, group: e.target.value })}>
                 <option value="ASSIGNMENTS">Assignments</option>
-                <option value="QUIZES">Quizzes</option>
+                <option value="QUIZZES">Quizzes</option>
               </Form.Select>
             </Form.Group>
           </Col>
