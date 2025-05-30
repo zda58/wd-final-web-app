@@ -7,9 +7,11 @@ import GreenCheckmark from "../Modules/GreenCheckmark";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { setQuizzes } from "./reducer";
+import { deleteQuiz, setQuizzes, updateQuiz } from "./reducer";
 import * as coursesClient from "../client"
 import { LuNotebookText } from "react-icons/lu";
+import QuizControlButtons from "./QuizControlButtons";
+import * as quizClient from "./client";
 
 const formatDate = (date: Date) => {
   const month = date.toLocaleString('default', { month: 'long' });
@@ -38,6 +40,25 @@ export default function Quizzes() {
     dispatch(setQuizzes(updatedQuizzes));
   };
 
+  const deleteQuizHandler = async (quizID: string) => {
+    try {
+      await quizClient.deleteQuiz(quizID);
+      dispatch(deleteQuiz(quizID));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateQuizPublished = async (quizID: string, published: boolean) => {
+    const curQuiz = quizzes.find((q: any) => q._id === quizID);
+    if (!curQuiz) return;
+    const updatedQuiz = {
+      ...curQuiz, published: published
+    }
+    await quizClient.updateQuiz(updatedQuiz);
+    dispatch(updateQuiz(updatedQuiz));
+  };
+
   useEffect(() => {
     fetchQuizzes();
   }, []);
@@ -56,9 +77,12 @@ export default function Quizzes() {
           </div>
           <ListGroup className="wd-lessons rounded-0">
             {quizzes.filter((quiz: any) => quiz.course === cid).map((quiz: any) => {
-              const fromDate = new Date(quiz.from);
               const dueDate = new Date(quiz.due);
-
+              const fromDate = new Date(quiz.from);
+              const untilDate = new Date(quiz.until);
+              const points = quiz.questions.reduce(
+                (total: number, question: any) => total + (question.points || 0)
+                , 0) || 0
               return (
                 <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
                   <div className="d-flex align-items-center">
@@ -68,20 +92,19 @@ export default function Quizzes() {
                       <Nav.Link href={currentUser.role == "FACULTY" ?
                         `#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}` : ``}
                         className="wd-assignment-link fw-bold">{quiz.title}</Nav.Link>
-                      <span className="text-danger">Multiple Modules</span>
                       {!isNaN(fromDate.getTime()) && (
                         <> | <span className="fw-bold"> Not available until {formatDate(fromDate)} </span></>)}
-                      <br />
-                      {!isNaN(dueDate.getTime()) && (<><span className="fw-bold"> Due </span> {formatDate(dueDate)} | </>)}
-                      {quiz.points}pts
+                      {!isNaN(dueDate.getTime()) && (<> | <span className="fw-bold"> Due </span> {formatDate(dueDate)} | </>)}
+                      {points} pts | {quiz.questions.length} questions
+                      {
+                        " | attempt"
+                      }
                     </div>
                   </div>
                   <div>
                     {
-                      /*<AssignmentControlButtons assignmentId={assignment._id} deleteAssignment={(assignmentId) => {
-                      deleteRemoteAssignment(assignmentId)
-                    }} />*/
-                  }
+                      <QuizControlButtons quiz={quiz} deleteQuiz={deleteQuizHandler} setQuizPublished={updateQuizPublished}/>
+                    }
                   </div>
                 </ListGroup.Item>
               );

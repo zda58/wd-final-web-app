@@ -1,14 +1,16 @@
-import { useSelector } from "react-redux";
-import { useParams } from "react-router";
 
-export default function QuizTaker() {
-  //const { cid, qid } = useParams();
-  const { quizzes } = useSelector((state: any) => state.quizzesReducer);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-  const saveRecentAttemptHandler = (attempt: any) => {
-
-  };
-
-  return (<>taker</>);
-}
+export default function QuizTaker(
+  { quiz, answers, setAnswerHandler, finishQuizHandler } :
+  { quiz: any;
+    answers: any[];
+    setAnswerHandler: (qid: string, answer: any) => void;
+    finishQuizHandler: () => void;
+  }
+) {
+  return (
+    <>
+    {JSON.stringify(quiz)}
+    </>
+  );
+};

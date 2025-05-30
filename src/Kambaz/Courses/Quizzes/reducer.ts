@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   quizzes: [],
+  attempts: [],
 };
 const quizzesSlice = createSlice({
   name: "quizzes",
@@ -17,6 +18,10 @@ const quizzesSlice = createSlice({
         q._id === quiz._id ? quiz : q
       ) as any;
     },
+    deleteQuiz: (state, { payload: quizID }) => {
+      state.quizzes = state.quizzes.filter(
+        (q: any) => q._id !== quizID);
+    },
     /*
     deleteAssignment: (state, { payload: assignmentId }) => {
       state.assignments = state.assignments.filter(
@@ -31,6 +36,6 @@ const quizzesSlice = createSlice({
   },
 });
 
-export const { setQuizzes, addQuiz, updateQuiz } =
+export const { setQuizzes, addQuiz, updateQuiz, deleteQuiz } =
   quizzesSlice.actions;
 export default quizzesSlice.reducer;

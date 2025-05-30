@@ -11,9 +11,10 @@ import { useEffect, useState } from "react";
 import * as userClient from "../Account/client";
 import * as coursesClient from "./client"
 import Quizzes from "./Quizzes";
-import QuizEditor from "./Quizzes/Editor"
-import QuizTaker from "./Quizzes/QuizTaker";
+import QuizEditor from "./Quizzes/QuizEditor"
 import QuizDetails from "./Quizzes/QuizDetails";
+import QuizEnvironment from "./Quizzes/QuizEnvironment";
+import QuizResultsPage from "./Quizzes/QuizResultsPage";
 
 
 export default function Courses() {
@@ -64,7 +65,8 @@ export default function Courses() {
             <Route path="Quizzes" element={<Quizzes />} />
             <Route path="Quizzes/:qid" element={<QuizDetails />} />
             <Route path="Quizzes/:qid/edit" element={<QuizEditor />} />
-            <Route path="Quizzes/:qid/take" element={<QuizTaker />} />
+            <Route path="Quizzes/:qid/take/*" element={<QuizEnvironment />} />
+            <Route path="Quizzes/:qid/attempt/:aid" element={<QuizResultsPage />} />
             <Route path="Grades" element={<h2>Grades</h2>} />
             <Route path="People" element={<PeopleTable users={users} />} />
           </Routes>
