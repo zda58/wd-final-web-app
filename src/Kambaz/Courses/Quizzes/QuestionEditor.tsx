@@ -61,7 +61,7 @@ export default function QuestionEditor({ question, updateQuestionHandler, delete
         </div>
       </div>
 
-      Enter your question and multiple answers, then select the one correct answer.
+      Enter your question and answers
       <h4 className="fw-bold  ">Question:</h4>
       <Form.Group className="mb-3" controlId="wd-description">
         <Form.Control

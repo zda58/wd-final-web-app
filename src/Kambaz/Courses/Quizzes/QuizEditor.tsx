@@ -64,7 +64,8 @@ export default function QuizEditor() {
     questions: [],
   };
 
-  const [quiz, setQuiz] = useState(defaultQuiz);
+  const curQuiz = quizzes.find((q: any) => q._id === qid);
+  const [quiz, setQuiz] = useState(curQuiz ? structuredClone(curQuiz) : defaultQuiz);
   const createQuestionHandler = () => {
     const optId = uuidv4();
     const newQuestion = {
@@ -96,6 +97,10 @@ export default function QuizEditor() {
 
   const saveNewQuizHandler = async (publish: Boolean) => {
     if (!cid) return;
+    if (quiz.questions.length === 0) {
+      alert("Quiz must have at least 1 question");
+      return;
+    }
     const newQuiz =
       await coursesClient.createQuizForCourse(cid, { ...quiz, course: cid, published: publish });
     dispatch(addQuiz(newQuiz));
@@ -104,6 +109,10 @@ export default function QuizEditor() {
 
   const updateQuizHandler = async (publish: Boolean) => {
     if (!cid) return;
+    if (quiz.questions.length === 0) {
+      alert("Quiz must have at least 1 question");
+      return;
+    }
     const newUpdateQuiz =
       { ...quiz, _id: qid, course: cid, published: publish };
     await quizzesClient.updateQuiz(newUpdateQuiz);

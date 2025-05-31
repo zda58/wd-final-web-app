@@ -18,7 +18,7 @@ export const fetchQuizAttempts = async (qid: string, uid: string) => {
 };
 
 export const recordUserAttempt = async (attempt: any) => {
-  const { data } = await axios.put(
+  const { data } = await axios.post(
     `${QUIZZES_API}/${attempt.quizID}/attempts/${attempt.userID}`,
     attempt
   );

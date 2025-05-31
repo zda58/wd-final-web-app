@@ -89,15 +89,14 @@ export default function Quizzes() {
                     <BsGripVertical className="me-2 fs-3" />
                     <LuNotebookText color="green" className="me-2 fs-3" />
                     <div>
-                      <Nav.Link href={currentUser.role == "FACULTY" ?
-                        `#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}` : ``}
+                      <Nav.Link href={`#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
                         className="wd-assignment-link fw-bold">{quiz.title}</Nav.Link>
                       {!isNaN(fromDate.getTime()) && (
                         <> | <span className="fw-bold"> Not available until {formatDate(fromDate)} </span></>)}
                       {!isNaN(dueDate.getTime()) && (<> | <span className="fw-bold"> Due </span> {formatDate(dueDate)} | </>)}
                       {points} pts | {quiz.questions.length} questions
                       {
-                        " | attempt"
+                        `| ${quiz.multipleAttempts ? 1 : quiz.attempts} attempt(s)`
                       }
                     </div>
                   </div>

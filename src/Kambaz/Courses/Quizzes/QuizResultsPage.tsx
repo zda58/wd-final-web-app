@@ -1,5 +1,4 @@
 import { useParams } from "react-router";
-import { fetchQuizAttempts } from "./client";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import * as client from "./client"

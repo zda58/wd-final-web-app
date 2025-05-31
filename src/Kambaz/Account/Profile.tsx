@@ -22,6 +22,7 @@ export default function Profile() {
   useEffect(() => { fetchProfile(); }, []);
 
   const updateProfile = async () => {
+    await client.updateUser(profile);
     dispatch(setCurrentUser(profile));
   };
   return (

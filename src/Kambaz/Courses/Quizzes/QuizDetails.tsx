@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, useParams } from "react-router";
 import * as coursesClient from "../client"
 import { setQuizzes } from "./reducer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MdDoNotDisturbAlt } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
-
+import * as quizzesClient from "./client"
 
 const formatDate = (date: Date) => {
   const month = date.toLocaleString('default', { month: 'long' });
@@ -24,6 +24,7 @@ const formatDate = (date: Date) => {
 export default function QuizDetails() {
   const { cid, qid } = useParams();
   const dispatch = useDispatch();
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
 
   const fetchQuizzes = async () => {
@@ -39,6 +40,29 @@ export default function QuizDetails() {
 
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
   const quiz = quizzes.find((q: any) => q._id === qid);
+  const [allAttempts, setAllAttempts] = useState<any[]>([]);
+
+  const fetchQuizAttempts = async () => {
+    const attempts = await quizzesClient.fetchQuizAttempts(qid || "", currentUser._id);
+    attempts.sort((a: any, b: any) => {
+      const aDate = new Date(a.attemptEndTime);
+      const bDate = new Date(b.attemptEndTime);
+      if (aDate < bDate) {
+        return -1;
+      } else if (aDate > bDate) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    setAllAttempts(attempts);
+  };
+
+  useEffect(() => {
+    if (currentUser.role === "FACULTY") return;
+    fetchQuizAttempts();
+  }, [qid, currentUser]);
+
   if (!quiz) {
     return;
   }
@@ -51,17 +75,34 @@ export default function QuizDetails() {
   return (
     <>
       <div className="d-flex justify-content-center">
-        <Link className="btn btn-secondary btn-lg me-1 float-end" id="wd-add-module-btn"
-            to={`/Kambaz/Courses/${cid}/Quizzes/${qid}/take`}>
-            Preview
-          </Link>
-        <Link className="btn btn-danger btn-lg ms-1 float-end" id="wd-add-module-btn"
-            to={`/Kambaz/Courses/${cid}/Quizzes/${qid}/edit`}>
-             <CiEdit className="me-2 fs-5" />
-            Edit
-          </Link>
+        {(currentUser.role === "FACULTY") &&
+          (<>
+            <Link className="btn btn-secondary btn-lg me-1 float-end" id="wd-add-module-btn"
+              to={`/Kambaz/Courses/${cid}/Quizzes/${qid}/take`}>
+              Preview
+            </Link>
+            <Link className="btn btn-danger btn-lg ms-1 float-end" id="wd-add-module-btn"
+              to={`/Kambaz/Courses/${cid}/Quizzes/${qid}/edit`}>
+              <CiEdit className="me-2 fs-5" />
+              Edit
+            </Link>
+            <Col xs={4}></Col>
+          </>
+          )
+        }
+        {
+          (currentUser.role !== "FACULTY") &&
+          (
+            <>
+              <Link className="btn btn-secondary btn-lg me-1 float-end" id="wd-add-module-btn"
+                to={`/Kambaz/Courses/${cid}/Quizzes/${qid}/take`}>
+                Take
+              </Link>
+            </>
+          )
+        }
       </div>
-      <Container className="border m-5">
+      <Container className="border border-5 m-5">
         <h3 className="m-4">
           {quiz.title}
         </h3>
@@ -162,6 +203,53 @@ export default function QuizDetails() {
           </Col>
           <Col xs={4}></Col>
         </Row>
+        {(currentUser.role !== "FACULTY") &&
+          (<>
+            <h3 className="m-4">
+              Attempts
+            </h3>
+            <Row className="ms-5">
+              <Col className="text-center">
+                <table className="table table-borderless mx-auto">
+                  <thead>
+                    <tr>
+                      <th className="text-center border-bottom">Start Time</th>
+                      <th className="text-center border-bottom">End Time</th>
+                      <th className="text-center border-bottom">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      allAttempts.map((a: any) => {
+                        const startDate = new Date(a.attemptStartTime);
+                        const endDate = new Date(a.attemptStartTime);
+                        var score = 0;
+                        return (
+                          <tr>
+                            <td className="text-center">
+                              {
+                                (isNaN(startDate.getTime()) && "N/A") || formatDate(startDate)
+                              }
+                            </td>
+                            <td className="text-center">
+                              {
+                                (isNaN(endDate.getTime()) && "N/A") || formatDate(endDate)
+                              }
+                            </td>
+                            <td className="text-center">
+                              { score } / { 0 }
+                            </td>
+                          </tr>
+                        );
+                      })
+                    }
+                  </tbody>
+                </table>
+              </Col>
+              <Col xs={4}></Col>
+            </Row>
+          </>)
+        }
       </Container>
     </>
   );
