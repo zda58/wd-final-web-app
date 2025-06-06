@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import * as coursesClient from "../client";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuizzes } from "./reducer";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
@@ -62,7 +62,7 @@ export default function QuizTaker(
     }
   }, [questionNum, questionIdx, quiz]);
 
-  if (!quiz) return null;
+  if (!quiz) return <>Not Found</>;
 
   const curQuestion = quiz.questions[questionIdx];
 
@@ -75,10 +75,21 @@ export default function QuizTaker(
     }
     return array;
   };
+
+  const shuffledOptions = useMemo(() => {
+    if (!curQuestion || curQuestion.type !== "MULTIPLE") return [];
+    if (!quiz.shuffleAnswers) {
+      return curQuestion.multipleOpts;
+    }
+    const shuffled = shuffleAnswerList([...curQuestion.multipleOpts]);
+    return shuffled;
+  }, []);
+
+  
   return (
     <Row>
       <Col className="border border-3 m-3 p-5">
-        <h4>Q1 - HTML</h4>
+        <h4>{quiz.title}</h4>
         <h4>Quiz Instructions</h4>
         <hr />
         <Row className="border mx-auto m-5 pb-3" style={{ maxWidth: '800px' }}>
@@ -98,7 +109,7 @@ export default function QuizTaker(
           </Row>
           {curQuestion.type === "MULTIPLE" &&
             (<>
-              {shuffleAnswerList(curQuestion.multipleOpts.map((option: any) => (
+              {shuffledOptions.map((option: any) => (
                 <Form.Group key={option._id} className="mb-2">
                   <div className="d-flex align-items-center">
                     <Form.Check
@@ -114,7 +125,7 @@ export default function QuizTaker(
                     <label htmlFor={`wd-multiple-${option._id}`}>{option.value}</label>
                   </div>
                 </Form.Group>
-              )))}
+              ))}
             </>)}
 
           <div className="clearfix"></div>

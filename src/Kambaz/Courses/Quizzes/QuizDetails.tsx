@@ -72,6 +72,25 @@ export default function QuizDetails() {
   const untilDate = new Date(quiz.until);
 
   const showCorrectDate = new Date(quiz.showTime);
+
+  const calculateAttemptScore = (questions: any, answers: any) => {
+    var score = 0;
+    questions.map((q: any) => {
+      if (answers.some((a: any) => {
+        if (a.questionID !== q._id) return false;
+        if (q.type === "MULTIPLE") {
+          return q.multipleAnswerID === a.multipleAnswerID;
+        } else if (q.type === "TRUEFALSE") {
+          return q.boolAnswer === a.boolAnswer;
+        } else if (q.type === "FILLBLANK") {
+          return q.fillAnswers.includes(a.fillAnswer);
+        }
+        return false;
+      })) score += q.points;
+    });
+    return score;
+  };
+
   return (
     <>
       <div className="d-flex justify-content-center">
@@ -213,6 +232,7 @@ export default function QuizDetails() {
                 <table className="table table-borderless mx-auto">
                   <thead>
                     <tr>
+                      <th className="text-center border-bottom"></th>
                       <th className="text-center border-bottom">Start Time</th>
                       <th className="text-center border-bottom">End Time</th>
                       <th className="text-center border-bottom">Score</th>
@@ -220,24 +240,34 @@ export default function QuizDetails() {
                   </thead>
                   <tbody>
                     {
-                      allAttempts.map((a: any) => {
+                      allAttempts.map((a: any, idx: number) => {
                         const startDate = new Date(a.attemptStartTime);
                         const endDate = new Date(a.attemptStartTime);
-                        var score = 0;
+                        var score = calculateAttemptScore(a.originalQuestions, a.answers);
                         return (
                           <tr>
-                            <td className="text-center">
+                              <td className="text-center align-middle">
+                              {
+                                (idx == allAttempts.length - 1) &&
+                                <>
+                                  <Link className="btn btn-primary" to={`/Kambaz/Courses/${cid}/Quizzes/${qid}/attempt/${a._id}`}> View </Link>
+                                </>
+                              }
+                              </td>
+                            <td className="text-center align-middle">
                               {
                                 (isNaN(startDate.getTime()) && "N/A") || formatDate(startDate)
                               }
                             </td>
-                            <td className="text-center">
+                            <td className="text-center align-middle">
                               {
                                 (isNaN(endDate.getTime()) && "N/A") || formatDate(endDate)
                               }
                             </td>
-                            <td className="text-center">
-                              { score } / { 0 }
+                            <td className="text-center align-middle">
+                              { score } / { quiz.questions.reduce(
+                (total: number, question: any) => total + (question.points || 0)
+                , 0) || 0 }
                             </td>
                           </tr>
                         );

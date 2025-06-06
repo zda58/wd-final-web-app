@@ -3,11 +3,12 @@ import GreenCheckmark from "../Modules/GreenCheckmark";
 import { FcCancel } from "react-icons/fc";
 import { Dropdown } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router";
+import { useSelector } from "react-redux";
 
 export default function QuizControlButtons({ quiz, deleteQuiz, setQuizPublished }:
   { quiz: any; deleteQuiz: (quizID: string) => void; setQuizPublished: (quizID: string, published: boolean) => void; }) {
   const { cid } = useParams();
-
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const navigate = useNavigate();
   return (
     <div className="float-end d-flex">
@@ -19,8 +20,9 @@ export default function QuizControlButtons({ quiz, deleteQuiz, setQuizPublished 
           <IoEllipsisVertical className="fs-4" />
         </Dropdown.Toggle>
 
+        {currentUser.role === "FACULTY" &&
         <Dropdown.Menu>
-          <Dropdown.Item onClick={() => navigate(`Kambaz/Courses/${cid}/Quizzes/${quiz._id}/edit`)}>
+          <Dropdown.Item onClick={() => navigate(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}/edit`)}>
             Edit
           </Dropdown.Item>
           <Dropdown.Item onClick={() => deleteQuiz(quiz._id)}>
@@ -35,6 +37,7 @@ export default function QuizControlButtons({ quiz, deleteQuiz, setQuizPublished 
               Unpublish
             </Dropdown.Item>}
         </Dropdown.Menu>
+        }
       </Dropdown>
     </div>
   );

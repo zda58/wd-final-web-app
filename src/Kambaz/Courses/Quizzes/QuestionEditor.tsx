@@ -62,15 +62,15 @@ export default function QuestionEditor({ question, updateQuestionHandler, delete
       </div>
 
       Enter your question and answers
-      <h4 className="fw-bold  ">Question:</h4>
-      <Form.Group className="mb-3" controlId="wd-description">
+      <h4 className="fw-bold">Question:</h4>
+      <Form.Group className="mb-3" controlId="wd-question">
         <Form.Control
           as="textarea"
           style={{ height: '150px', width: '500px' }}
-          value={questionEdits.description || ''}
+          value={questionEdits.question || ''}
           readOnly={!editing}
           onChange={(e) => {
-            setQuestionEdits({ ...questionEdits, description: e.target.value });
+            setQuestionEdits({ ...questionEdits, question: e.target.value });
           }} />
       </Form.Group>
       {questionEdits.type === "MULTIPLE" &&

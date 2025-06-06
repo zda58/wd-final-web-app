@@ -14,6 +14,7 @@ export default function QuizResults({ attempt, quiz }:
   }, [attempt, quiz]);
 
   const getUserAnswerForQuestion = (question: any) => {
+    if (!attempt) return;
     const answer = attempt.answers.find((a: any) => a.questionID === question._id);
     if (!answer) return answer;
     if (question.type === "MULTIPLE") {
@@ -21,17 +22,17 @@ export default function QuizResults({ attempt, quiz }:
     } else if (question.type === "TRUEFALSE") {
       return answer.boolAnswer;
     } else if (question.type === "FILLBLANK") {
-      return answer.fillAnswer;
+      return answer.fillAnswer.toString().toLowerCase();
     }
   };
 
-  const getCorrectAnswerForQuestion = (question: any) => {
+  const getCorrectAnswersForQuestion = (question: any) => {
     if (question.type === "MULTIPLE") {
-      return question.multipleAnswerID;
+      return [question.multipleAnswerID];
     } else if (question.type === "TRUEFALSE") {
-      return question.boolAnswer;
+      return [question.boolAnswer];
     } else if (question.type === "FILLBLANK") {
-      return question.fillAnswers || [];
+      return question.fillAnswers.map((q: string) => q.toLowerCase()) || [];
     }
   };
 
@@ -39,11 +40,12 @@ export default function QuizResults({ attempt, quiz }:
 
   return (
     <>
-      {JSON.stringify(attempt, null, 2)}
       {
         quiz.questions.map((curQuestion: any, questionIdx: number) => {
           const isCorrect =
-            getCorrectAnswerForQuestion(curQuestion) === getUserAnswerForQuestion(curQuestion);
+            getCorrectAnswersForQuestion(curQuestion).includes(getUserAnswerForQuestion(curQuestion));
+            console.log("correct, ", getCorrectAnswersForQuestion(curQuestion))
+            console.log("user: ", getUserAnswerForQuestion(curQuestion))
           return (
             <Row key={curQuestion._id} className="border mx-auto m-5 pb-3" style={{ maxWidth: '800px' }}>
               <div className="bg-secondary p-2 border border-bottom-0 mb-3 d-flex justify-content-between">
@@ -60,8 +62,11 @@ export default function QuizResults({ attempt, quiz }:
               </div>
               <Row>
                 <div className="d-flex align-items-center m-3">
-                  {curQuestion.title}
+                  <span className="fw-bold me-2">Title:</span>{curQuestion.title}
                 </div>
+              </Row>
+              <Row className="ms-3 mb-3 fw-bold">
+                Description:
               </Row>
               <Row className="ms-4 mb-3">
                 {curQuestion.question}
@@ -81,7 +86,7 @@ export default function QuizResults({ attempt, quiz }:
                         <label htmlFor={`wd-multiple-${option._id}`}>
                           {option.value}
                           {
-                            (getCorrectAnswerForQuestion(curQuestion) === option._id) &&
+                            (getCorrectAnswersForQuestion(curQuestion)[0] === option._id) &&
                             <span className="badge bg-success ms-1">Correct Answer</span>
                           }
                         </label>
@@ -106,7 +111,7 @@ export default function QuizResults({ attempt, quiz }:
                         <label htmlFor="bool-true-option">
                           True
                           {
-                            (getCorrectAnswerForQuestion(curQuestion) === true) &&
+                            (getCorrectAnswersForQuestion(curQuestion)[0] === true) &&
                             <span className="badge bg-success ms-1">Correct Answer</span>
                           }
                         </label>
@@ -124,7 +129,7 @@ export default function QuizResults({ attempt, quiz }:
                         <label htmlFor="bool-false-option">
                           False
                           {
-                            (getCorrectAnswerForQuestion(curQuestion) === false) &&
+                            (getCorrectAnswersForQuestion(curQuestion)[0] === false) &&
                             <span className="badge bg-success ms-1">Correct Answer</span>
                           }
                         </label>

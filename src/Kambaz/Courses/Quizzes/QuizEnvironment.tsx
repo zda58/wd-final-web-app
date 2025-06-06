@@ -42,13 +42,15 @@ export default function QuizEnvironment() {
   };
 
   useEffect(() => {
-    if (currentUser.role === "FACULTY") return;
     fetchQuizAttempts();
   }, [qid, currentUser]);
 
   useEffect(() => {
-    if (currentUser.role === "FACULTY") return;
     if (!quiz) return;
+    if (currentUser.role === "FACULTY") {
+      setValidTake(true);
+      return;
+    }
     if (!quiz.multipleAttempts) {
       if (allAttempts.length > 0) {
         alert(`You have already taken this quiz.`);
@@ -66,7 +68,7 @@ export default function QuizEnvironment() {
         setValidTake(true);
       }
     }
-  }, [allAttempts]);
+  }, [allAttempts, currentUser]);
 
   const setAnswerHandler = (qid: string, ans: any) => {
     if (!quiz) return;

@@ -21,6 +21,8 @@ export default function QuizResultsPage() {
     fetchQuizAttempts();
   }, []);
 
+  if (!attempt) return;
+
   return (
     <QuizResults attempt={attempt} quiz={quiz} />
   );
