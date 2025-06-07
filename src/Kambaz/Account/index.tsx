@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router";
+import { Routes, Route, Navigate, Link } from "react-router";
 import Signin from "./Signin";
 import Profile from "./Profile";
 import Signup from "./Signup";
@@ -28,6 +28,12 @@ export default function Account() {
           </tr>
         </tbody>
       </table>
+      <div className="text-center bottom-0 start-0 end-0 position-fixed mb-5 fs-1">
+        Alex Xie - Sec 4 <br />
+        Pauline Saveliev - Sec 4 <br />
+        <Link to={"https://github.com/zda58/wd-final-web-app"}>Web App Link</Link><br />
+        <Link to={"https://github.com/zda58/wd-final-server-app"}>Server App Link</Link><br />
+      </div>
     </div>
   );
 }
