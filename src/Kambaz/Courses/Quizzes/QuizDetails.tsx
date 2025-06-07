@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router";
 import * as coursesClient from "../client"
 import { setQuizzes, updateQuiz } from "./reducer";
 import { useEffect, useState } from "react";
-import { MdDoNotDisturbAlt } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import * as quizzesClient from "./client"
 

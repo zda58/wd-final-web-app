@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Navigate, Route, Routes, useNavigate, useParams } from "react-router";
 import QuizResults from "./QuizResults";
 import QuizTaker from "./QuizTaker";
-import * as coursesClient from "../client"
-import { setQuizzes } from "./reducer";
 import * as quizzesClient from "./client"
 
 export default function QuizEnvironment() {
