@@ -2,7 +2,7 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useParams } from "react-router";
 import * as coursesClient from "../client"
-import { setQuizzes } from "./reducer";
+import { setQuizzes, updateQuiz } from "./reducer";
 import { useEffect, useState } from "react";
 import { MdDoNotDisturbAlt } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
@@ -91,11 +91,25 @@ export default function QuizDetails() {
     return score;
   };
 
+  const updateQuizPublished = async (quizID: string, published: boolean) => {
+      const curQuiz = quizzes.find((q: any) => q._id === quizID);
+      if (!curQuiz) return;
+      const updatedQuiz = {
+        ...curQuiz, published: published
+      }
+      await quizzesClient.updateQuiz(updatedQuiz);
+      dispatch(updateQuiz(updatedQuiz));
+    };
+
   return (
     <>
       <div className="d-flex justify-content-center">
         {(currentUser.role === "FACULTY") &&
           (<>
+            <Button variant={quiz.published ? "secondary" : "danger"} size="lg" className="me-2"
+            onClick={() => {
+              updateQuizPublished(quiz._id, !quiz.published);
+            }}>{quiz.published ? "Unpublish" : "Publish"}</Button>
             <Link className="btn btn-secondary btn-lg me-1 float-end" id="wd-add-module-btn"
               to={`/Kambaz/Courses/${cid}/Quizzes/${qid}/take`}>
               Preview
@@ -242,7 +256,7 @@ export default function QuizDetails() {
                     {
                       allAttempts.map((a: any, idx: number) => {
                         const startDate = new Date(a.attemptStartTime);
-                        const endDate = new Date(a.attemptStartTime);
+                        const endDate = new Date(a.attemptEndTime);
                         var score = calculateAttemptScore(a.originalQuestions, a.answers);
                         return (
                           <tr>

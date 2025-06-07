@@ -6,12 +6,13 @@ import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { deleteQuiz, setQuizzes, updateQuiz } from "./reducer";
 import * as coursesClient from "../client"
 import { LuNotebookText } from "react-icons/lu";
 import QuizControlButtons from "./QuizControlButtons";
 import * as quizClient from "./client";
+import * as userClient from "../../Account/client";
 
 const formatDate = (date: Date) => {
   const month = date.toLocaleString('default', { month: 'long' });
@@ -32,6 +33,8 @@ export default function Quizzes() {
   const dispatch = useDispatch();
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+  const [ attempts, setAttempts ] = useState<any[]>([]);
 
   const fetchQuizzes = async () => {
     if (!cid) return;
@@ -61,7 +64,45 @@ export default function Quizzes() {
 
   useEffect(() => {
     fetchQuizzes();
+    fetchUserAttempts();
   }, []);
+
+  const fetchUserAttempts = async () => {
+    const attempts = await userClient.findAttemptsForUser(currentUser._id);
+    attempts.sort((a: any, b: any) => {
+      const aDate = new Date(a.attemptEndTime);
+      const bDate = new Date(b.attemptEndTime);
+      if (aDate < bDate) {
+        return -1;
+      } else if (aDate > bDate) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    setAttempts(attempts);
+  };
+
+  const calculateAttemptScore = (attempt: any) => {
+    const questions = attempt.originalQuestions;
+    const answers = attempt.answers;
+    var score = 0;
+    questions.map((q: any) => {
+      if (answers.some((a: any) => {
+        if (a.questionID !== q._id) return false;
+        if (q.type === "MULTIPLE") {
+          return q.multipleAnswerID === a.multipleAnswerID;
+        } else if (q.type === "TRUEFALSE") {
+          return q.boolAnswer === a.boolAnswer;
+        } else if (q.type === "FILLBLANK") {
+          return q.fillAnswers.includes(a.fillAnswer);
+        }
+        return false;
+      })) score += q.points;
+    });
+    return score;
+  };
+
   return (
     <div id="wd-quizzes">
       <QuizControl />
@@ -76,38 +117,55 @@ export default function Quizzes() {
             </div>
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            {quizzes.filter((quiz: any) => quiz.course === cid).map((quiz: any) => {
-              const dueDate = new Date(quiz.due);
-              const fromDate = new Date(quiz.from);
-              const untilDate = new Date(quiz.until);
-              const points = quiz.questions.reduce(
-                (total: number, question: any) => total + (question.points || 0)
-                , 0) || 0
-              return (
-                <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-                  <div className="d-flex align-items-center">
-                    <BsGripVertical className="me-2 fs-3" />
-                    <LuNotebookText color="green" className="me-2 fs-3" />
+            {quizzes.filter((quiz: any) => quiz.course === cid)
+              .filter((quiz: any) => currentUser.role !== "STUDENT" || quiz.published)
+              .sort((a: any, b: any) => {
+                const da = new Date(a.from).getTime();
+                const db = new Date(b.from).getTime();
+                return da - db;
+              })
+              .map((quiz: any) => {
+                if (currentUser.role === "STUDENT" && !quiz.published) return;
+                const dueDate = new Date(quiz.due);
+                const fromDate = new Date(quiz.from);
+                const untilDate = new Date(quiz.until);
+                const curDate = new Date();
+
+                const available = curDate >= fromDate && curDate < untilDate;
+                const points = quiz.questions.reduce(
+                  (total: number, question: any) => total + (question.points || 0)
+                  , 0) || 0
+
+                const curAttempts = attempts.filter((a: any) => a.quizID === quiz._id);
+                const attemptCnt = curAttempts.length;
+                return (
+                  <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
+                    <div className="d-flex align-items-center">
+                      <BsGripVertical className="me-2 fs-3" />
+                      <LuNotebookText color="green" className="me-2 fs-3" />
+                      <div>
+                        <Nav.Link href={`#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
+                          className="wd-assignment-link fw-bold">{quiz.title}</Nav.Link>
+                        {
+                          available ? <span className="fw-bold">Available</span>
+                            : (curDate < untilDate ? <span className="fw-bold"> Not available until {formatDate(fromDate)} </span> : <span className="fw-bold">Closed</span>)
+                        }
+                        {!isNaN(dueDate.getTime()) && (<> | <span className="fw-bold"> Due </span> {formatDate(dueDate)} | </>)}
+                        {points} pts | {quiz.questions.length} questions
+                        {
+                          (curAttempts.length > 0) && 
+                          <> | Last score: {calculateAttemptScore(curAttempts[attemptCnt - 1])}/{points}</>
+                        }
+                      </div>
+                    </div>
                     <div>
-                      <Nav.Link href={`#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
-                        className="wd-assignment-link fw-bold">{quiz.title}</Nav.Link>
-                      {!isNaN(fromDate.getTime()) && (
-                        <> | <span className="fw-bold"> Not available until {formatDate(fromDate)} </span></>)}
-                      {!isNaN(dueDate.getTime()) && (<> | <span className="fw-bold"> Due </span> {formatDate(dueDate)} | </>)}
-                      {points} pts | {quiz.questions.length} questions
                       {
-                        `| ${quiz.multipleAttempts ? 1 : quiz.attempts} attempt(s)`
+                        <QuizControlButtons quiz={quiz} deleteQuiz={deleteQuizHandler} setQuizPublished={updateQuizPublished} />
                       }
                     </div>
-                  </div>
-                  <div>
-                    {
-                      <QuizControlButtons quiz={quiz} deleteQuiz={deleteQuizHandler} setQuizPublished={updateQuizPublished}/>
-                    }
-                  </div>
-                </ListGroup.Item>
-              );
-            })}
+                  </ListGroup.Item>
+                );
+              })}
           </ListGroup>
         </ListGroup.Item>
       </ListGroup>

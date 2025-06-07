@@ -2,6 +2,19 @@ import { useEffect } from "react";
 import { Form, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router";
 
+const formatDate = (date: Date) => {
+  const month = date.toLocaleString('default', { month: 'long' });
+  const day = date.getDate();
+
+  let hours = date.getHours();
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return `${month} ${day} at ${hours}:${minutes}${ampm}`;
+};
+
 export default function QuizResults({ attempt, quiz }:
   { attempt: any; quiz: any; }) {
   const { cid, qid } = useParams();
@@ -36,16 +49,41 @@ export default function QuizResults({ attempt, quiz }:
     }
   };
 
+  const calculateAttemptScore = (questions: any, answers: any) => {
+    var score = 0;
+    questions.map((q: any) => {
+      if (answers.some((a: any) => {
+        if (a.questionID !== q._id) return false;
+        if (q.type === "MULTIPLE") {
+          return q.multipleAnswerID === a.multipleAnswerID;
+        } else if (q.type === "TRUEFALSE") {
+          return q.boolAnswer === a.boolAnswer;
+        } else if (q.type === "FILLBLANK") {
+          return q.fillAnswers.includes(a.fillAnswer);
+        }
+        return false;
+      })) score += q.points;
+    });
+    return score;
+  };
+
   if (!quiz) return;
 
   return (
     <>
+      <Row className="mx-auto" style={{ maxWidth: '800px' }}>
+      <h4 className="mt-5">{quiz.title}</h4>
+      <h5 className="m-3">Score: {calculateAttemptScore(attempt.originalQuestions, attempt.answers)} / {attempt.originalQuestions.reduce(
+                (total: number, question: any) => total + (question.points || 0)
+                , 0) || 0} </h5>
+      <h5 className="m-3">
+        Finished: {formatDate(new Date(attempt.attemptEndTime))}
+      </h5>
+      </Row>
       {
-        quiz.questions.map((curQuestion: any, questionIdx: number) => {
+        attempt.originalQuestions.map((curQuestion: any, questionIdx: number) => {
           const isCorrect =
             getCorrectAnswersForQuestion(curQuestion).includes(getUserAnswerForQuestion(curQuestion));
-            console.log("correct, ", getCorrectAnswersForQuestion(curQuestion))
-            console.log("user: ", getUserAnswerForQuestion(curQuestion))
           return (
             <Row key={curQuestion._id} className="border mx-auto m-5 pb-3" style={{ maxWidth: '800px' }}>
               <div className="bg-secondary p-2 border border-bottom-0 mb-3 d-flex justify-content-between">
