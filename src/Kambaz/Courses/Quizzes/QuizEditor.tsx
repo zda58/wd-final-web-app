@@ -77,7 +77,8 @@ export default function QuizEditor() {
       multipleOpts: [{ _id: optId, value: "Option" }],
       multipleAnswerID: optId,
       boolAnswer: true,
-      fillAnswers: ["Answer"]
+      fillAnswers: ["Answer"],
+      fillBlanks: [{_id: uuidv4(), label: "New Blank", answers: ["answer 1"]}],
     } as any;
     const newQuestions: any[] = [...quiz.questions, newQuestion];
     setQuiz({ ...quiz, questions: newQuestions });
@@ -95,29 +96,57 @@ export default function QuizEditor() {
     setQuiz({ ...quiz, questions: updatedList as any })
   };
 
+  const [boxPointValue, setBoxPointValue] = useState(quiz.questions.reduce((total: number, q: any) => total + q.points, 0));
   const saveNewQuizHandler = async (publish: Boolean) => {
+    console.log("boxpointval in new =", boxPointValue);
     if (!cid) return;
     if (quiz.questions.length === 0) {
       alert("Quiz must have at least 1 question");
       return;
     }
+    const totalPoints = quiz.questions.reduce((total: number, q: any) => total + q.points, 0);
+    console.log("total points calculated:(new)", totalPoints);
+    if (totalPoints !== boxPointValue) {
+      if (totalPoints > boxPointValue) {
+        const diff = totalPoints - boxPointValue;
+        alert(`Question points must not exceed quiz point value. ${diff} excess points. Adjust point value of quiz or questions.`);
+        return;
+      }
+      const diff = boxPointValue - totalPoints;
+      alert(`${diff} point${diff > 1 ? 's' : ''} unaccounted for. Adjust point value of quiz or questions.`);
+      return;
+    }
     const newQuiz =
       await coursesClient.createQuizForCourse(cid, { ...quiz, course: cid, published: publish });
     dispatch(addQuiz(newQuiz));
-    navigator(`/Kambaz/Courses/${cid}/Quizzes`);
+    console.log(newQuiz._id);
+    navigator(`/Kambaz/Courses/${cid}/Quizzes/${newQuiz._id}`);
   };
 
   const updateQuizHandler = async (publish: Boolean) => {
+    console.log("boxpointval in update =", boxPointValue);
     if (!cid) return;
     if (quiz.questions.length === 0) {
       alert("Quiz must have at least 1 question");
+      return;
+    }
+    const totalPoints = quiz.questions.reduce((total: number, q: any) => total + q.points, 0);
+    if (totalPoints !== boxPointValue) {
+      if (totalPoints > boxPointValue) {
+        const diff = totalPoints - boxPointValue;
+        alert(`Question points must not exceed quiz point value. ${diff} excess points. Adjust point value of quiz or questions.`);
+        return;
+      }
+      const diff = boxPointValue - totalPoints;
+      alert(`${diff} point${diff > 1 ? 's' : ''} unaccounted for. Adjust point value of quiz or questions.`);
       return;
     }
     const newUpdateQuiz =
       { ...quiz, _id: qid, course: cid, published: publish };
     await quizzesClient.updateQuiz(newUpdateQuiz);
     dispatch(updateQuiz(newUpdateQuiz));
-    navigator(`/Kambaz/Courses/${cid}/Quizzes`);
+    console.log(quiz._id);
+    navigator(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`);
   };
 
   return (
@@ -126,7 +155,7 @@ export default function QuizEditor() {
         <Col></Col>
         <Col xs="auto" className="d-flex align-items-center">
           <span className="me-2 fw-bold">
-            Points:{
+            Question Point Total: {
               quiz.questions.reduce(
                 (total: number, question: any) => total + (question.points || 0)
                 , 0) || 0
@@ -199,6 +228,20 @@ export default function QuizEditor() {
                     </Form.Label>
                   </div>
                 </Row>
+                
+
+
+                <Row className="mb-3">
+                  <div className="d-flex align-items-center">
+                    <Form.Control type="number" id="wd-mins" value={boxPointValue || 0}
+                      onChange={(e) => setBoxPointValue(parseInt(e.target.value) >= 0 ? parseInt(e.target.value) : 0 )}
+                      style={{ width: '100px' }} />
+                    <Form.Label htmlFor="wd-mins" className="mb-0 me-2 ms-3">Points</Form.Label>
+                  </div>
+                </Row>
+
+
+
                 <Row className="mb-3">
                   <div className="d-flex align-items-center">
                     <Form.Check type="checkbox" className="me-2" id="wd-time-limit"

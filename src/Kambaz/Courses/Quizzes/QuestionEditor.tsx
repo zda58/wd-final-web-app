@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 export default function QuestionEditor({ question, updateQuestionHandler, deleteQuestionHandler }: {
@@ -23,7 +23,6 @@ export default function QuestionEditor({ question, updateQuestionHandler, delete
     updateQuestionHandler(question._id, questionEdits);
     setEditing(false);
   };
-
   return (
     <Form>
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -120,8 +119,9 @@ export default function QuestionEditor({ question, updateQuestionHandler, delete
           ))}
           {editing && (
             <Button
-              variant="secondary"
+              variant="primary"
               className="mb-3"
+              size="sm"
               onClick={() => {
                 setQuestionEdits({
                   ...questionEdits,
@@ -181,68 +181,142 @@ export default function QuestionEditor({ question, updateQuestionHandler, delete
       {
         questionEdits.type === "FILLBLANK" &&
         (<>
-          <h4 className="fw-bold">Fill in the Blank Answers:</h4>
-          {
-            questionEdits.fillAnswers.map((option: any, index: number) => (
-              <Form.Group key={option._id} className="mb-2">
-                <div className="d-flex align-items-center">
-                  <Form.Control
-                    type="text"
-                    value={option}
-                    readOnly={!editing}
-                    onChange={(e) => {
-                      const newFillAnswers = questionEdits.fillAnswers;
-                      newFillAnswers[index] = e.target.value;
-                      setQuestionEdits({
-                        ...questionEdits,
-                        fillAnswers: newFillAnswers,
-                      });
-                    }}
-                    style={{ width: '400px' }}
-                  />
-                  {editing && (
+          <h4 className="fw-bold">Blanks and Answers:</h4>
+          {questionEdits.fillBlanks.map((blank: any, bIdx: number) => (
+            <div key={bIdx}>
+              <div className="fbquiz-label d-flex align-items-center">
+                {editing ? (
+                  <>
+                  <Form.Label className="me-2">Label:</Form.Label>
+                  <Form.Control 
+                      type="text" 
+                      value={blank.label}
+                      className="me-2 w-50 mb-2"
+                      onChange={(e) => {
+                        const blanksBeingEdited = [...questionEdits.fillBlanks];
+                        blanksBeingEdited[bIdx].label = e.target.value;
+                        setQuestionEdits({
+                          ...questionEdits,
+                          fillBlanks: blanksBeingEdited,
+                        });}
+                      }
+                      ></Form.Control>
                     <Button
                       variant="danger"
                       size="sm"
                       className="ms-2"
                       onClick={() => {
-                        const newFillAnswers = questionEdits.fillAnswers.splice(index, 1)
-                        setQuestionEdits({ ...questionEdits, multipleOpts: newFillAnswers });
+                        const blanksBeingEdited = [...questionEdits.fillBlanks];
+                          blanksBeingEdited.splice(bIdx, 1)
+                          setQuestionEdits({
+                            ...questionEdits,
+                            fillBlanks: blanksBeingEdited,
+                          });
+                      }}>
+                      Delete Blank
+                    </Button>
+                  </>
+                ) : (
+                  <h5>{blank.label}</h5>)
+                }
+              </div>
+              <div className="fbquiz-answers mb-2">
+                {blank.answers.map((ans: any, ansIdx: number) => (
+                  <Form.Group key={`${bIdx}--${ansIdx}`}>
+                    {editing ? (
+                      <div className="d-flex align-items-center mb-2">
+                      <Form.Control
+                        type="text"
+                        value={ans}
+                        readOnly={!editing}
+                        onChange={(e) => {
+                          const blanksBeingEdited = [...questionEdits.fillBlanks];
+                          blanksBeingEdited[bIdx].answers[ansIdx] = e.target.value;
+                          setQuestionEdits({
+                            ...questionEdits,
+                            fillBlanks: blanksBeingEdited,
+                          });
+                        }}
+                        style={{ width: '400px' }}
+                      />
+                      <Button
+                      variant="danger"
+                      size="sm"
+                      className="ms-2"
+                      onClick={() => {
+                        const blanksBeingEdited = [...questionEdits.fillBlanks];
+                        blanksBeingEdited[bIdx].answers.splice(ansIdx, 1)
+                        setQuestionEdits({
+                            ...questionEdits,
+                            fillBlanks: blanksBeingEdited,
+                        });
                       }}>
                       Remove
                     </Button>
-                  )}
-                </div>
-              </Form.Group>
-            ))}
+                    </div>
+                    ) : (
+                      <span className="text-success">{ans}</span>
+                    )}
+                  </Form.Group>
+                ))}
+              </div>
+              {editing && (
+                <Button
+                  variant="primary"
+                  className="mb-3"
+                  size="sm"
+                  onClick={() => {
+                    const blanksBeingEdited = [...questionEdits.fillBlanks];
+                    blanksBeingEdited[bIdx].answers.push("New Answer")
+                    setQuestionEdits({
+                        ...questionEdits,
+                        fillBlanks: blanksBeingEdited,
+                    });
+                  }}
+                >
+                  Add Answer
+                </Button>
+              )}
+            </div>
+            // label + text entry box
+            // text entry box for each answer
+              // delete button for each answer
+              // add new answer button
+            // delete button for each blank
+            // add new blank button
+            
+          ))
+          }
           {editing && (
-            <Button
-              variant="secondary"
-              className="mb-3"
-              onClick={() => {
-                setQuestionEdits({
-                  ...questionEdits,
-                  fillAnswers: [...questionEdits.fillAnswers, "New Answer"]
-                });
-              }}
-            >
-              Add Answer
-            </Button>
-          )}
+                <Button
+                  variant="warning"
+                  className="mb-3"
+                  onClick={() => {
+                    const blanksBeingEdited = [...questionEdits.fillBlanks];
+                    blanksBeingEdited.push({_id: uuidv4(), label: "New Blank", answers:["Answer"]})
+                    setQuestionEdits({
+                        ...questionEdits,
+                        fillBlanks: blanksBeingEdited,
+                    });
+                  }}
+                >
+                  Add Blank
+                </Button>
+              )}
         </>)
 
       }
       <div className="clearfix"></div>
       {editing &&
         <>
-          <Button onClick={cancelEditHandler}>Cancel</Button>
-          <Button onClick={saveEditsHandler}>Update</Button>
+          <Button variant="secondary" onClick={cancelEditHandler} className="me-2">Cancel</Button>
+          <Button variant="success" onClick={saveEditsHandler}>Update</Button>
         </>
       }
       {!editing && (
         <>
-          <Button onClick={editHandler}>Edit</Button>
-          <Button onClick={() => deleteQuestionHandler(question._id)}>Delete Question</Button>
+          <Button variant="warning" onClick={editHandler} className="me-2">Edit</Button>
+          <Button variant="danger" onClick={() => deleteQuestionHandler(question._id)}>Delete Question</Button>
         </>
       )}
     </Form>

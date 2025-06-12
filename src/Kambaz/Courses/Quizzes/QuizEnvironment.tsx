@@ -92,12 +92,35 @@ export default function QuizEnvironment() {
         setAnswers([...answers, newAnswer]);
       }
     } else if (question.type === "FILLBLANK") {
-      const newAnswer = { questionID: qid, fillAnswer: ans as string };
+      //-- receive: questionId, and blank/answer combo
+      // need to keep all prevAnswer values, and update singular blank
+          //-- if there is no prevAnswer, make a new one with singular ans in fillAnswers
+          // otherwise, copy prevAnswer. if needed blankID is in fillAnswers, go thru update
+          // if needed blankId not in fillAnswers, add it
+      // then do setAnswers with updated or push as necessary
       if (prevAnswer) {
-        const updatedAnswers = answers.map((a: any) =>
-          a.questionID === qid ? newAnswer : a);
-        setAnswers(updatedAnswers);
+        // check if prevAnswer has value for given blankId
+        const prevBlankValue = prevAnswer.fillAnswers.find((a: any) => a.blankId === ans.blankId)
+        if (prevBlankValue) {
+          // if blank has a prev value, replace it with new "ans"
+          const newFillAnswers = prevAnswer.fillAnswers.map((a: any) => 
+            a.blankId === ans.blankId ? ans : a)
+          // update answer with updated fillAnswers array 
+          const updatedAnswers = answers.map((a: any) => 
+            a.questionID === qid ? {questionID: qid, fillAnswers: newFillAnswers} : a)
+          // update hook
+          setAnswers(updatedAnswers);
+        } else {
+          // if blank has no prev value, create new Answer with the new blank value
+          const newAnswer = {questionID: qid, fillAnswers: [...prevAnswer.fillAnswers, ans]}
+          // update answers array with new Answer
+          const updatedAnswers = answers.map((a: any) =>
+            a.questionID === qid ? newAnswer : a)
+          // update hook
+          setAnswers(updatedAnswers);
+        }
       } else {
+        const newAnswer = { questionID: qid, fillAnswers: [ans] };
         setAnswers([...answers, newAnswer]);
       }
     }

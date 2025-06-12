@@ -42,7 +42,7 @@ export default function QuizTaker(
     } else if (question.type === "TRUEFALSE") {
       return answer.boolAnswer;
     } else if (question.type === "FILLBLANK") {
-      return answer.fillAnswer;
+      return answer.fillAnswers;
     }
   };
 
@@ -83,7 +83,7 @@ export default function QuizTaker(
     }
     const shuffled = shuffleAnswerList([...curQuestion.multipleOpts]);
     return shuffled;
-  }, []);
+  }, [curQuestion]);
 
   
   return (
@@ -94,16 +94,11 @@ export default function QuizTaker(
         <hr />
         <Row className="border mx-auto m-5 pb-3" style={{ maxWidth: '800px' }}>
           <div className="bg-secondary p-2 border border-bottom-0 mb-3 d-flex justify-content-between">
-            <h5 className="m-2">Question {questionIdx + 1} </h5>
+            <h5 className="m-2">Question {questionIdx + 1}: {curQuestion.title} </h5>
             <h5 className="d-flex align-items-center me-3">
               {curQuestion.points} pts
             </h5>
           </div>
-          <Row>
-            <div className="d-flex align-items-center m-3">
-              {curQuestion.title}
-            </div>
-          </Row>
           <Row className="ms-4 mb-3">
             {curQuestion.question}
           </Row>
@@ -167,15 +162,23 @@ export default function QuizTaker(
           {
             curQuestion.type === "FILLBLANK" &&
             (<>
-              <Form.Control
-                type="text"
-                value={getAnswerForQuestion(curQuestion)}
-                onChange={(e) => {
-                  setAnswerHandler(curQuestion._id, e.target.value);
-                }}
-                className="ms-4"
-                style={{ width: '400px' }}
-              />
+              {curQuestion.fillBlanks.map((blank: any, bidx: number) => (
+                <div className="mx-3 mb-2" id={`${curQuestion._id}-bidx-${bidx}`}>
+                  {blank.label}
+                  <Form.Control
+                    type="text"
+                    value={getAnswerForQuestion(curQuestion) ? 
+                      getAnswerForQuestion(curQuestion).find((a:any) => a.blankId == blank._id) ? getAnswerForQuestion(curQuestion).find((a:any) => a.blankId == blank._id).fillAnswer : ""
+                      : 
+                      ""}
+                    onChange={(e) => {
+                      setAnswerHandler(curQuestion._id, {blankId: blank._id, fillAnswer: e.target.value});
+                    }}
+                    className="mt-2"
+                    style={{ width: '400px' }}
+                  />
+                </div>
+              ))}
             </>)
 
           }

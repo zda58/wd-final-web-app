@@ -35,7 +35,8 @@ export default function QuizResults({ attempt, quiz }:
     } else if (question.type === "TRUEFALSE") {
       return answer.boolAnswer;
     } else if (question.type === "FILLBLANK") {
-      return answer.fillAnswer.toString().toLowerCase();
+      //return "testing breakpoint";
+      return answer.fillAnswers;
     }
   };
 
@@ -67,6 +68,22 @@ export default function QuizResults({ attempt, quiz }:
     return score;
   };
 
+  const evaluateCorrect = (curQuestion: any) => {
+    // check correctness of other questions normally
+    if (curQuestion.type !== "FILLBLANK") return getCorrectAnswersForQuestion(curQuestion).includes(getUserAnswerForQuestion(curQuestion));;
+    // check whether each blank is correct. if any are wrong, return false
+    const userAnswers = getUserAnswerForQuestion(curQuestion);
+    const blanks = curQuestion.fillBlanks;
+    let correct = true;
+    blanks.forEach((blank: any) => {
+      const userResponse = userAnswers.find((ans: any) => ans.blankId === blank._id);
+      if (!userResponse) correct = false;
+      else if (!blank.answers.includes(userResponse.fillAnswer)) correct = false;
+      
+    })
+    return correct;
+  }
+
   if (!quiz) return;
 
   return (
@@ -82,8 +99,7 @@ export default function QuizResults({ attempt, quiz }:
       </Row>
       {
         attempt.originalQuestions.map((curQuestion: any, questionIdx: number) => {
-          const isCorrect =
-            getCorrectAnswersForQuestion(curQuestion).includes(getUserAnswerForQuestion(curQuestion));
+          const isCorrect = evaluateCorrect(curQuestion);
           return (
             <Row key={curQuestion._id} className="border mx-auto m-5 pb-3" style={{ maxWidth: '800px' }}>
               <div className="bg-secondary p-2 border border-bottom-0 mb-3 d-flex justify-content-between">
@@ -178,22 +194,30 @@ export default function QuizResults({ attempt, quiz }:
               {
                 curQuestion.type === "FILLBLANK" &&
                 (<>
-                  <Form.Control
-                    type="text"
-                    value={getUserAnswerForQuestion(curQuestion)}
-                    className="ms-4"
-                    style={{ width: '400px' }}
-                    readOnly={true} />
-                  <div className="mt-3 ms-3 mb-2">
-                    <span className="badge bg-success">Correct Answers:</span>
-                  </div>
-                  {curQuestion.fillAnswers.map((a: any, idx: number) => {
-                    return (
-                      <div key={idx} className=" mt-2 ms-3">
-                        "{a}"
-                      </div>
-                    );
-                  })}
+                  <Row className="ms-3 fw-bold">
+                    Blanks:
+                  </Row>
+                  {curQuestion.fillBlanks.map((blank: any) => (
+                    <div className="mt-4">
+                    <div className="mx-3 mb-1">{blank.label}</div>
+                    <Form.Control
+                      type="text"
+                      value={getUserAnswerForQuestion(curQuestion).find((ans: any) => blank._id === ans.blankId) ? getUserAnswerForQuestion(curQuestion).find((ans: any) => blank._id === ans.blankId).fillAnswer : ""}
+                      className="ms-4"
+                      style={{ width: '400px' }}
+                      readOnly={true} />
+                    <div className="mt-3 ms-3 mb-2">
+                      <span className="badge bg-success">Correct Answers:</span>
+                    </div>
+                    {blank.answers.map((ans: any, idx: number) =>{
+                      return (
+                        <div key={idx} className=" mt-2 ms-3">
+                          "{ans}"
+                        </div>
+                      )
+                    })}
+                    </div>
+                  ))}
                 </>)
               }
               <div className="clearfix"></div>
