@@ -60,7 +60,7 @@ export default function QuizResults({ attempt, quiz }:
         } else if (q.type === "TRUEFALSE") {
           return q.boolAnswer === a.boolAnswer;
         } else if (q.type === "FILLBLANK") {
-          return q.fillAnswers.includes(a.fillAnswer);
+          return evaluateCorrect(q);
         }
         return false;
       })) score += q.points;
