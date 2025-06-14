@@ -97,6 +97,7 @@ export default function Quizzes() {
         } else if (q.type === "FILLBLANK") {
           const blanks = q.fillBlanks;
           return !blanks.some((blank: any) => {
+            if (!a.fillAnswers) return true;
             const userResponse = a.fillAnswers.find((ans: any) => ans.blankId === blank._id);
             if (!userResponse) return true;
             const blankAnswers = blank.answers.map((b: any) => b.toLowerCase())
