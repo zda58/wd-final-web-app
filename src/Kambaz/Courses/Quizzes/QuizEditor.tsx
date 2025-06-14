@@ -97,7 +97,7 @@ export default function QuizEditor() {
   };
 
   const [boxPointValue, setBoxPointValue] = useState(quiz.questions.reduce((total: number, q: any) => total + q.points, 0));
-  const saveNewQuizHandler = async (publish: Boolean) => {
+  const saveNewQuizHandler = async (publish: Boolean, navigateToDetails: Boolean) => {
     console.log("boxpointval in new =", boxPointValue);
     if (!cid) return;
     if (quiz.questions.length === 0) {
@@ -119,11 +119,14 @@ export default function QuizEditor() {
     const newQuiz =
       await coursesClient.createQuizForCourse(cid, { ...quiz, course: cid, published: publish });
     dispatch(addQuiz(newQuiz));
-    console.log(newQuiz._id);
-    navigator(`/Kambaz/Courses/${cid}/Quizzes/${newQuiz._id}`);
+    if (navigateToDetails) {
+      navigator(`/Kambaz/Courses/${cid}/Quizzes/${newQuiz._id}`);
+    } else {
+      navigator(`/Kambaz/Courses/${cid}/Quizzes`);
+    }
   };
 
-  const updateQuizHandler = async (publish: Boolean) => {
+  const updateQuizHandler = async (publish: Boolean, navigateToDetails: Boolean) => {
     console.log("boxpointval in update =", boxPointValue);
     if (!cid) return;
     if (quiz.questions.length === 0) {
@@ -145,8 +148,11 @@ export default function QuizEditor() {
       { ...quiz, _id: qid, course: cid, published: publish };
     await quizzesClient.updateQuiz(newUpdateQuiz);
     dispatch(updateQuiz(newUpdateQuiz));
-    console.log(quiz._id);
-    navigator(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`);
+    if (navigateToDetails) {
+      navigator(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`);
+    } else {
+      navigator(`/Kambaz/Courses/${cid}/Quizzes`);
+    }
   };
 
   return (
@@ -391,18 +397,18 @@ export default function QuizEditor() {
                   className="btn btn-danger btn-lg me-2"
                   onClick={() => {
                     if (isNewQuiz) {
-                      saveNewQuizHandler(quiz.published);
+                      saveNewQuizHandler(quiz.published, true);
                     } else {
-                      updateQuizHandler(quiz.published);
+                      updateQuizHandler(quiz.published, true);
                     }
                   }}>Save</Button>
                 <Button id="wd-save"
                   className="btn btn-danger btn-lg me-2"
                   onClick={() => {
                     if (isNewQuiz) {
-                      saveNewQuizHandler(true);
+                      saveNewQuizHandler(true, false);
                     } else {
-                      updateQuizHandler(true);
+                      updateQuizHandler(true, false);
                     }
                   }}>Save and Publish</Button>
               </Col>
@@ -441,18 +447,18 @@ export default function QuizEditor() {
                 className="btn btn-danger btn-lg me-2"
                 onClick={() => {
                   if (isNewQuiz) {
-                    saveNewQuizHandler(quiz.published);
+                    saveNewQuizHandler(quiz.published, true);
                   } else {
-                    updateQuizHandler(quiz.published);
+                    updateQuizHandler(quiz.published, true);
                   }
                 }}>Save</Button>
               <Button id="wd-save"
                 className="btn btn-danger btn-lg me-2"
                 onClick={() => {
                   if (isNewQuiz) {
-                    saveNewQuizHandler(true);
+                    saveNewQuizHandler(true, false);
                   } else {
-                    updateQuizHandler(true);
+                    updateQuizHandler(true, false);
                   }
                 }}>Save and Publish</Button>
             </Col>

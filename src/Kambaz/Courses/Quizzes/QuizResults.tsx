@@ -79,8 +79,8 @@ export default function QuizResults({ attempt, quiz }:
     blanks.forEach((blank: any) => {
       const userResponse = userAnswers.find((ans: any) => ans.blankId === blank._id);
       if (!userResponse) correct = false;
-      else if (!blank.answers.includes(userResponse.fillAnswer)) correct = false;
-      
+      const blankAnswers = blank.answers.map((b: any) => b.toLowerCase())
+      if (!blankAnswers.includes(userResponse.fillAnswer.toLowerCase())) correct = false;
     })
     return correct;
   }

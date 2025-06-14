@@ -82,7 +82,13 @@ export default function QuizDetails() {
         } else if (q.type === "TRUEFALSE") {
           return q.boolAnswer === a.boolAnswer;
         } else if (q.type === "FILLBLANK") {
-          return q.fillAnswers.includes(a.fillAnswer);
+          const blanks = q.fillBlanks;
+          return !blanks.some((blank: any) => {
+            const userResponse = a.fillAnswers.find((ans: any) => ans.blankId === blank._id);
+            if (!userResponse) return true;
+            const blankAnswers = blank.answers.map((b: any) => b.toLowerCase())
+            return !blankAnswers.includes(userResponse.fillAnswer.toLowerCase())
+          })
         }
         return false;
       })) score += q.points;
