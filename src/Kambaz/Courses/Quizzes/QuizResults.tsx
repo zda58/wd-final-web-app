@@ -80,6 +80,7 @@ export default function QuizResults({ attempt, quiz }:
       const userResponse = userAnswers.find((ans: any) => ans.blankId === blank._id);
       if (!userResponse) correct = false;
       const blankAnswers = blank.answers.map((b: any) => b.toLowerCase())
+      if (!userResponse.fillAnswer) correct = false;
       if (!blankAnswers.includes(userResponse.fillAnswer.toLowerCase())) correct = false;
     })
     return correct;
