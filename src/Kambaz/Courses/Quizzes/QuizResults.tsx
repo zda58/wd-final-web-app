@@ -203,7 +203,12 @@ export default function QuizResults({ attempt, quiz }:
                     <div className="mx-3 mb-1">{blank.label}</div>
                     <Form.Control
                       type="text"
-                      value={getUserAnswerForQuestion(curQuestion).find((ans: any) => blank._id === ans.blankId) ? getUserAnswerForQuestion(curQuestion).find((ans: any) => blank._id === ans.blankId).fillAnswer : ""}
+                      value={ getUserAnswerForQuestion(curQuestion) ? (
+                      getUserAnswerForQuestion(curQuestion).find((ans: any) => blank._id === ans.blankId)
+                      ? 
+                      getUserAnswerForQuestion(curQuestion).find((ans: any) => blank._id === ans.blankId).fillAnswer 
+                      : 
+                      "") : ""}
                       className="ms-4"
                       style={{ width: '400px' }}
                       readOnly={true} />
