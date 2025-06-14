@@ -75,6 +75,7 @@ export default function QuizResults({ attempt, quiz }:
     const userAnswers = getUserAnswerForQuestion(curQuestion);
     const blanks = curQuestion.fillBlanks;
     let correct = true;
+    if (!userAnswers) return false;
     blanks.forEach((blank: any) => {
       const userResponse = userAnswers.find((ans: any) => ans.blankId === blank._id);
       if (!userResponse) correct = false;
