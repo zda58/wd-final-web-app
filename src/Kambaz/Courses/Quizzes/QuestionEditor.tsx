@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 export default function QuestionEditor({ question, updateQuestionHandler, deleteQuestionHandler }: {
